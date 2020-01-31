@@ -6,7 +6,7 @@ import annoy from './responders/annoy'
 
 process.on('unhandledRejection', function (err) { throw err })
 
-const responders = [ferris, riir, roulette, annoy]
+const responders = [rename]
 
 const { TOKEN } = process.env
 if (!TOKEN) throw new Error('TOKEN is unset')

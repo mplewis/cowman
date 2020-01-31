@@ -1,4 +1,4 @@
-import annoy from './annoy'
+import annoy from './rename'
 
 import fakeMessage from '../__spec__/fake_message'
 
