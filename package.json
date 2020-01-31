@@ -35,7 +35,6 @@
     "bufferutil": "^4.0.1",
     "discord.js": "discordjs/discord.js",
     "express": "^4.17.1",
-    "prom-client": "^11.5.3",
     "zlib-sync": "^0.1.5",
     "zucc": "^0.1.2"
   }

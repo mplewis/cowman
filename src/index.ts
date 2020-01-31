@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js'
-import * as metrics from './metrics'
 import ferris from './responders/ferris'
 import riir from './responders/riir'
 import roulette from './responders/roulette'
@@ -33,8 +32,6 @@ client.on('message', msg => {
     const { username: requesterUsername } = author
     const { name: responderName } = responder
 
-    metrics.responseSent(requesterUsername, responderName)
-
     console.log(`${responderName} ← ${requesterUsername}: ${msg.content}`)
     const response = responder.handle(msg)
     console.log(`${responderName} → ${botUsername}: ${response}`)
@@ -43,4 +40,3 @@ client.on('message', msg => {
 })
 
 client.login(TOKEN)
-metrics.serve()
