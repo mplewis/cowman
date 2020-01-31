@@ -1,8 +1,5 @@
 import * as Discord from 'discord.js'
-import ferris from './responders/ferris'
-import riir from './responders/riir'
-import roulette from './responders/roulette'
-import annoy from './responders/annoy'
+import rename from './responders/rename'
 
 process.on('unhandledRejection', function (err) { throw err })
 
@@ -26,14 +23,22 @@ client.on('message', msg => {
   if (!author) return
   if (author.bot) return
 
-  responders.forEach(responder => {
+  responders.forEach(async responder => {
     if (!responder.applicable(msg)) return
 
     const { username: requesterUsername } = author
     const { name: responderName } = responder
 
     console.log(`${responderName} ← ${requesterUsername}: ${msg.content}`)
-    const response = responder.handle(msg)
+    let response: string
+    try {
+      response = await responder.handle(msg)
+    } catch (e) {
+      console.error(`Responder ${responderName} threw an error for message:`)
+      console.error(msg.content)
+      console.error(e)
+      return
+    }
     console.log(`${responderName} → ${botUsername}: ${response}`)
     msg.channel.send(response)
   })
