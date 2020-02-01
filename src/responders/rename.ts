@@ -12,7 +12,7 @@ const rename: Responder = {
     const target = msg.mentions.members.first()
     if (!target) throw new Error('applicable matched, but no target')
     await target.setNickname(newName)
-    return `${target.user.username} => ${newName}`
+    return `Renamed ${target.user.username} to ${newName}`
   }
 }
 
