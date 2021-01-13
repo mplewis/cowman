@@ -32,4 +32,5 @@ jobs:
           version: 19.03.13
       - checkout
       - docker/build:
+          image: mplewis/cowman
           lint: true
