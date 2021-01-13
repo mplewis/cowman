@@ -1,9 +1,0 @@
-apiVersion: skaffold/v1beta17
-kind: Config
-metadata:
-  name: retf
-
-build:
-  artifacts:
-    - image: gcr.io/airy-charge-246717/retf
-  googleCloudBuild: {}
