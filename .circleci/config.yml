@@ -33,4 +33,4 @@ jobs:
       - checkout
       - docker/build:
           image: mplewis/cowman
-          lint: true
+          lint-dockerfile: true
