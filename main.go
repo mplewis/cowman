@@ -42,13 +42,11 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error creating session")
 	}
-
 	sess.AddHandler(messageCreate)
 	err = sess.Open()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error connecting to Discord")
 	}
-
 	me, err := sess.User("@me")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error getting self details")
