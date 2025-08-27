@@ -1,12 +1,15 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(pnpm init:*)",
-      "Bash(pnpm install:*)",
-      "Bash(mkdir:*)",
-      "Bash(pnpx prisma:*)"
-    ],
-    "deny": [],
-    "ask": []
-  }
+	"permissions": {
+		"allow": [
+			"Bash(pnpm init:*)",
+			"Bash(pnpm install:*)",
+			"Bash(mkdir:*)",
+			"Bash(pnpx prisma:*)",
+			"Bash(pnpm lint:fix:*)",
+			"Bash(pnpm test:*)",
+			"Bash(pnpm db:generate:*)"
+		],
+		"deny": [],
+		"ask": []
+	}
 }

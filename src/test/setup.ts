@@ -1,10 +1,17 @@
-import { afterAll, beforeAll } from "vitest";
-import { database } from "../services/database.js";
+import { afterAll, beforeAll } from 'vitest'
+
+// Set test environment
+process.env.NODE_ENV = 'test'
+
+// Set minimal test environment variables to prevent errors
+process.env.DISCORD_TOKEN = 'test-token'
+process.env.DISCORD_CLIENT_ID = 'test-client-id'
+process.env.DATABASE_TEST_URL = 'postgresql://test:test@localhost:5432/test_db'
 
 beforeAll(async () => {
-	await database.connect();
-});
+	// Database connection setup can be added here when needed for integration tests
+})
 
 afterAll(async () => {
-	await database.disconnect();
-});
+	// Cleanup can be added here when needed
+})
