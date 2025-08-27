@@ -46,11 +46,11 @@ with leaderboards.
 
 ### Phase 1: Project Setup
 
-- [ ] Initialize TypeScript project with proper tooling
-- [ ] Set up Prisma with PostgreSQL
-- [ ] Create database schema and migrations
-- [ ] Configure discord.js client
-- [ ] Implement basic bot connection
+- [x] Initialize TypeScript project with proper tooling
+- [x] Set up Prisma with PostgreSQL
+- [x] Create database schema and migrations
+- [x] Configure discord.js client
+- [x] Implement basic bot connection
 
 ### Phase 2: Core Event Handling
 

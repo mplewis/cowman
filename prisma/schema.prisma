@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id        String   @id
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  channels      Channel[]
+  nameBattles   NameBattle[]
+  names         Name[]
+  renameHistory RenameHistory[]
+  backfillState BackfillState[]
+
+  @@map("guilds")
+}
+
+model Channel {
+  id      String @id
+  guildId String @map("guild_id")
+  name    String
+  type    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  guild         Guild           @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  messages      Message[]
+  backfillState BackfillState[]
+
+  @@map("channels")
+}
+
+model User {
+  id          String  @id
+  username    String
+  displayName String  @map("display_name")
+  avatarUrl   String? @map("avatar_url")
+  customName  String? @map("custom_name")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  messages         Message[]
+  reactionUsers    ReactionUser[]
+  wordUsage        WordUsage[]
+  nameVotes        NameVote[]
+  targetedRenames  RenameHistory[] @relation("TargetedRenames")
+  performedRenames RenameHistory[] @relation("PerformedRenames")
+
+  @@map("users")
+}
+
+model Message {
+  id              String    @id
+  channelId       String    @map("channel_id")
+  authorId        String    @map("author_id")
+  content         String
+  timestamp       DateTime
+  edited          Boolean   @default(false)
+  editedTimestamp DateTime? @map("edited_timestamp")
+  attachments     Json?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  channel   Channel     @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  author    User        @relation(fields: [authorId], references: [id])
+  reactions Reaction[]
+  wordUsage WordUsage[]
+
+  @@map("messages")
+}
+
+model Reaction {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  emoji     String
+  emojiName String   @map("emoji_name")
+  isCustom  Boolean  @map("is_custom")
+  count     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  message       Message        @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  reactionUsers ReactionUser[]
+
+  @@unique([messageId, emoji])
+  @@map("reactions")
+}
+
+model ReactionUser {
+  id         String   @id @default(uuid())
+  reactionId String   @map("reaction_id")
+  userId     String   @map("user_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  reaction Reaction @relation(fields: [reactionId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([reactionId, userId])
+  @@map("reaction_users")
+}
+
+model Word {
+  id           String   @id @default(uuid())
+  word         String   @unique
+  originalForm String   @map("original_form")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  wordUsage WordUsage[]
+
+  @@map("words")
+}
+
+model WordUsage {
+  id        String   @id @default(uuid())
+  wordId    String   @map("word_id")
+  userId    String   @map("user_id")
+  messageId String   @map("message_id")
+  count     Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  word    Word    @relation(fields: [wordId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([wordId, userId, messageId])
+  @@map("word_usage")
+}
+
+model NameBattle {
+  id        String   @id @default(uuid())
+  guildId   String   @map("guild_id")
+  nameA     String   @map("name_a")
+  nameB     String   @map("name_b")
+  messageId String   @map("message_id")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  guild     Guild      @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  nameVotes NameVote[]
+
+  @@map("name_battles")
+}
+
+model NameVote {
+  id       String   @id @default(uuid())
+  battleId String   @map("battle_id")
+  userId   String   @map("user_id")
+  choice   String   // 'a' or 'b'
+  createdAt DateTime @default(now()) @map("created_at")
+
+  battle NameBattle @relation(fields: [battleId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id])
+
+  @@unique([battleId, userId])
+  @@map("name_votes")
+}
+
+model Name {
+  id         String   @id @default(uuid())
+  guildId    String   @map("guild_id")
+  name       String
+  usageCount Int      @default(1) @map("usage_count")
+  firstUsed  DateTime @map("first_used")
+  lastUsed   DateTime @map("last_used")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  guild         Guild           @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  renameHistory RenameHistory[]
+
+  @@unique([guildId, name])
+  @@map("names")
+}
+
+model RenameHistory {
+  id               String   @id @default(uuid())
+  guildId          String   @map("guild_id")
+  targetUserId     String   @map("target_user_id")
+  renamedByUserId  String   @map("renamed_by_user_id")
+  nameId           String   @map("name_id")
+  previousName     String?  @map("previous_name")
+  channelId        String   @map("channel_id")
+  messageId        String   @map("message_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  guild       Guild @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  targetUser  User  @relation("TargetedRenames", fields: [targetUserId], references: [id])
+  renamedBy   User  @relation("PerformedRenames", fields: [renamedByUserId], references: [id])
+  name        Name  @relation(fields: [nameId], references: [id])
+
+  @@map("rename_history")
+}
+
+model BackfillState {
+  id              String    @id @default(uuid())
+  guildId         String    @map("guild_id")
+  channelId       String    @map("channel_id")
+  lastMessageId   String?   @map("last_message_id")
+  completed       Boolean   @default(false)
+  startedAt       DateTime  @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  guild   Guild   @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([guildId, channelId])
+  @@map("backfill_state")
+}
