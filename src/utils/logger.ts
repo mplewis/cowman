@@ -2,13 +2,15 @@ import pino from 'pino'
 
 const logger = pino({
 	level: process.env.LOG_LEVEL || 'info',
-	...(process.env.NODE_ENV === 'development' && {
+	...((process.stdout.isTTY || process.env.NODE_ENV === 'test') && {
 		transport: {
 			target: 'pino-pretty',
 			options: {
 				colorize: true,
 				translateTime: 'yyyy-mm-dd HH:MM:ss',
 				ignore: 'pid,hostname',
+				singleLine: false,
+				hideObject: false,
 			},
 		},
 	}),

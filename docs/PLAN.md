@@ -54,10 +54,10 @@ with leaderboards.
 
 ### Phase 2: Core Event Handling
 
-- [ ] Message event processor
-- [ ] Reaction event processor
-- [ ] Word extraction and stemming logic
-- [ ] Basic data persistence
+- [x] Message event processor
+- [x] Reaction event processor
+- [x] Word extraction and stemming logic
+- [x] Basic data persistence
 
 ### Phase 3: Rename Feature
 

@@ -68,3 +68,4 @@ class DatabaseService {
 }
 
 export const database = new DatabaseService()
+export const db = database.client

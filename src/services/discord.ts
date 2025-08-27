@@ -1,6 +1,8 @@
 import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js'
 import { config } from '../utils/env.js'
 import { logger } from '../utils/logger.js'
+import { messageProcessor } from './messageProcessor.js'
+import { reactionProcessor } from './reactionProcessor.js'
 
 class DiscordService {
 	public client: Client
@@ -29,6 +31,45 @@ class DiscordService {
 			})
 		})
 
+		// Message events
+		this.client.on(Events.MessageCreate, async message => {
+			try {
+				await messageProcessor.processMessage(message)
+			} catch (error) {
+				logger.error(error, 'Failed to process message create event')
+			}
+		})
+
+		this.client.on(Events.MessageUpdate, async (_oldMessage, newMessage) => {
+			try {
+				// Process updated message
+				if (newMessage.partial) {
+					newMessage = await newMessage.fetch()
+				}
+				await messageProcessor.processMessage(newMessage)
+			} catch (error) {
+				logger.error(error, 'Failed to process message update event')
+			}
+		})
+
+		// Reaction events
+		this.client.on(Events.MessageReactionAdd, async (reaction, user) => {
+			try {
+				await reactionProcessor.processReactionAdd(reaction, user)
+			} catch (error) {
+				logger.error(error, 'Failed to process reaction add event')
+			}
+		})
+
+		this.client.on(Events.MessageReactionRemove, async (reaction, user) => {
+			try {
+				await reactionProcessor.processReactionRemove(reaction, user)
+			} catch (error) {
+				logger.error(error, 'Failed to process reaction remove event')
+			}
+		})
+
+		// Error handling
 		this.client.on(Events.Error, error => {
 			logger.error(error, 'Discord client error')
 		})
