@@ -137,17 +137,17 @@ const renameCommand = {
 			await client.renameHistory.create({
 				data: {
 					targetUser: {
-						connect: { id: targetUser.id }
+						connect: { id: targetUser.id },
 					},
 					renamedBy: {
-						connect: { id: interaction.user.id }
+						connect: { id: interaction.user.id },
 					},
 					name: {
-						connect: { id: nameRecord.id }
+						connect: { id: nameRecord.id },
 					},
 					previousName,
 					guild: {
-						connect: { id: interaction.guild.id }
+						connect: { id: interaction.guild.id },
 					},
 					channelId: interaction.channel?.id || 'unknown',
 					messageId: interaction.id,

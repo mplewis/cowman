@@ -17,7 +17,7 @@ const pretty = {
 
 const tmpFile = {
 	target: 'pino/file',
-	options: { destination: '/tmp/cowman.log' },
+	options: { destination: 'tmp/cowman.log' },
 }
 
 const log = pino({
