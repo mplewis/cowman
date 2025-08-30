@@ -1,4 +1,4 @@
-import { logger } from './logger.js'
+import { log } from './logger'
 
 interface Config {
 	discordToken: string
@@ -11,7 +11,7 @@ interface Config {
 function mustEnv(key: string): string {
 	const value = process.env[key]
 	if (!value) {
-		logger.error(`Missing required environment variable: ${key}`)
+		log.error(`Missing required environment variable: ${key}`)
 		throw new Error(`Missing required environment variable: ${key}`)
 	}
 	return value

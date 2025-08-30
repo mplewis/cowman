@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process'
 import { beforeAll } from 'vitest'
-import { db } from '../services/database.js'
-import { logger } from '../utils/logger.js'
+import { db } from '../services/database'
+import { log } from '../utils/logger'
 
 // Set test environment
 process.env.NODE_ENV = 'test'
@@ -14,7 +14,7 @@ process.env.DATABASE_TEST_URL = 'postgresql://mplewis@localhost:5432/cowman-test
 beforeAll(async () => {
 	try {
 		await db.$connect()
-		logger.info('Test database connected successfully')
+		log.info('Test database connected successfully')
 
 		await db.$executeRaw`DROP SCHEMA IF EXISTS public CASCADE;`
 		await db.$executeRaw`CREATE SCHEMA IF NOT EXISTS public;`
@@ -24,9 +24,9 @@ beforeAll(async () => {
 			stdio: 'pipe',
 		})
 
-		logger.info('Test database migrated successfully')
+		log.info('Test database migrated successfully')
 	} catch (error) {
-		logger.error(error, 'Failed to setup test database')
+		log.error(error, 'Failed to setup test database')
 		throw error
 	}
 })

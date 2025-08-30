@@ -1,6 +1,6 @@
 import type { MessageReaction, PartialMessageReaction, PartialUser, User } from 'discord.js'
-import { logger } from '../utils/logger.js'
-import { database } from './database.js'
+import { log } from '../utils/logger'
+import { database } from './database'
 
 /**
  * Process Discord reactions and store them in the database
@@ -88,7 +88,7 @@ export class ReactionProcessor {
 				},
 			})
 
-			logger.debug(
+			log.debug(
 				{
 					messageId: reaction.message.id,
 					userId: user.id,
@@ -98,7 +98,7 @@ export class ReactionProcessor {
 				'Reaction add processed successfully'
 			)
 		} catch (error) {
-			logger.error(
+			log.error(
 				{
 					error,
 					messageId: reaction.message.id,
@@ -167,7 +167,7 @@ export class ReactionProcessor {
 				})
 			}
 
-			logger.debug(
+			log.debug(
 				{
 					messageId: reaction.message.id,
 					userId: user.id,
@@ -177,7 +177,7 @@ export class ReactionProcessor {
 				'Reaction remove processed successfully'
 			)
 		} catch (error) {
-			logger.error(
+			log.error(
 				{
 					error,
 					messageId: reaction.message.id,

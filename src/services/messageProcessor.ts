@@ -1,7 +1,7 @@
 import type { Message } from 'discord.js'
-import { logger } from '../utils/logger.js'
-import { extractWords } from '../utils/textProcessor.js'
-import { database } from './database.js'
+import { log } from '../utils/logger'
+import { extractWords } from '../utils/textProcessor'
+import { database } from './database'
 
 /**
  * Process Discord messages and store them in the database
@@ -92,7 +92,7 @@ export class MessageProcessor {
 				await this.processMessageWords(message)
 			}
 
-			logger.debug(
+			log.debug(
 				{
 					messageId: message.id,
 					channelId: message.channel.id,
@@ -102,7 +102,7 @@ export class MessageProcessor {
 				'Message processed successfully'
 			)
 		} catch (error) {
-			logger.error(
+			log.error(
 				{
 					error,
 					messageId: message.id,

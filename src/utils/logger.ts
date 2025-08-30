@@ -1,6 +1,6 @@
 import pino from 'pino'
 
-const logger = pino({
+const log = pino({
 	level: process.env.LOG_LEVEL || 'info',
 	...((process.stdout.isTTY || process.env.NODE_ENV === 'test') && {
 		transport: {
@@ -16,4 +16,4 @@ const logger = pino({
 	}),
 })
 
-export { logger }
+export { log }

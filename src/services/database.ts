@@ -1,5 +1,5 @@
-import { PrismaClient } from '../generated/prisma/index.js'
-import { logger } from '../utils/logger.js'
+import { PrismaClient } from '../generated/prisma/index'
+import { log } from '../utils/logger'
 
 class DatabaseService {
 	private prisma: PrismaClient
@@ -19,7 +19,7 @@ class DatabaseService {
 
 	private setupLogging(): void {
 		this.prisma.$on('query', e => {
-			logger.debug(
+			log.debug(
 				{
 					query: e.query,
 					params: e.params,
@@ -30,24 +30,24 @@ class DatabaseService {
 		})
 
 		this.prisma.$on('error', e => {
-			logger.error(e, 'Database error')
+			log.error(e, 'Database error')
 		})
 
 		this.prisma.$on('info', e => {
-			logger.info(e.message, 'Database info')
+			log.info({ message: e.message }, 'Database info')
 		})
 
 		this.prisma.$on('warn', e => {
-			logger.warn(e.message, 'Database warning')
+			log.warn({ message: e.message }, 'Database warning')
 		})
 	}
 
 	async connect(): Promise<void> {
 		try {
 			await this.prisma.$connect()
-			logger.info('Connected to database')
+			log.info('Connected to database')
 		} catch (error) {
-			logger.error(error, 'Failed to connect to database')
+			log.error(error, 'Failed to connect to database')
 			throw error
 		}
 	}
@@ -55,9 +55,9 @@ class DatabaseService {
 	async disconnect(): Promise<void> {
 		try {
 			await this.prisma.$disconnect()
-			logger.info('Disconnected from database')
+			log.info('Disconnected from database')
 		} catch (error) {
-			logger.error(error, 'Failed to disconnect from database')
+			log.error(error, 'Failed to disconnect from database')
 			throw error
 		}
 	}

@@ -14,6 +14,7 @@
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy",
 		"db:studio": "prisma studio",
+		"commands:deploy": "tsx src/commands/deploy.ts",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"format": "prettier --write .",

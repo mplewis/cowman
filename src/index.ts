@@ -1,38 +1,18 @@
-import { database } from './services/database.js'
-import { discordService } from './services/discord.js'
-import { logger } from './utils/logger.js'
-
-async function main(): Promise<void> {
-	logger.info('Starting Discord bot...')
-
-	try {
-		// Connect to database
-		await database.connect()
-
-		// Connect to Discord
-		await discordService.connect()
-
-		// Setup graceful shutdown
-		setupGracefulShutdown()
-
-		logger.info('Bot is running!')
-	} catch (error) {
-		logger.error(error, 'Failed to start bot')
-		process.exit(1)
-	}
-}
+import { database } from './services/database'
+import { discordService } from './services/discord'
+import { log } from './utils/logger'
 
 function setupGracefulShutdown(): void {
 	const shutdown = async (signal: string): Promise<void> => {
-		logger.info(`Received ${signal}, shutting down gracefully...`)
+		log.info({ signal }, 'Received signal, shutting down gracefully...')
 
 		try {
 			await discordService.disconnect()
 			await database.disconnect()
-			logger.info('Shutdown complete')
+			log.info('Shutdown complete')
 			process.exit(0)
 		} catch (error) {
-			logger.error(error, 'Error during shutdown')
+			log.error(error, 'Error during shutdown')
 			process.exit(1)
 		}
 	}
@@ -41,18 +21,26 @@ function setupGracefulShutdown(): void {
 	process.on('SIGTERM', () => shutdown('SIGTERM'))
 
 	process.on('uncaughtException', error => {
-		logger.error(error, 'Uncaught exception')
-		process.exit(1)
+		log.error(error, 'Uncaught exception')
 	})
 
 	process.on('unhandledRejection', reason => {
-		logger.error(reason, 'Unhandled rejection')
-		process.exit(1)
+		log.error(reason, 'Unhandled rejection')
 	})
 }
 
-// Start the bot
-main().catch(error => {
-	logger.error(error, 'Fatal error in main function')
-	process.exit(1)
-})
+async function main(): Promise<void> {
+	log.info('Starting Discord bot...')
+
+	try {
+		await database.connect()
+		await discordService.connect()
+		setupGracefulShutdown()
+		log.info('Bot is running!')
+	} catch (error) {
+		log.error(error, 'Failed to start bot')
+		process.exit(1)
+	}
+}
+
+void main()

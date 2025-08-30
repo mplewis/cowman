@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { extractWords, normalizeText } from './textProcessor.js'
+import { extractWords, normalizeText } from './textProcessor'
 
 describe('textProcessor', () => {
 	describe('extractWords', () => {

@@ -61,11 +61,11 @@ with leaderboards.
 
 ### Phase 3: Rename Feature
 
-- [ ] Slash command `/rename @user NewName`
-- [ ] User nickname storage and retrieval
-- [ ] Name catalog creation and usage tracking
-- [ ] Rename history logging
-- [ ] Display custom names in reports
+- [x] Slash command `/rename @user NewName`
+- [x] User nickname storage and retrieval
+- [x] Name catalog creation and usage tracking
+- [x] Rename history logging
+- [x] Display custom names in reports
 
 ### Phase 4: Best Name Feature
 
