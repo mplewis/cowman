@@ -1,28 +1,29 @@
 {
-	"permissions": {
-		"allow": [
-			"Bash(pnpm init:*)",
-			"Bash(pnpm install:*)",
-			"Bash(mkdir:*)",
-			"Bash(pnpx prisma:*)",
-			"Bash(pnpm lint:fix:*)",
-			"Bash(pnpm test:*)",
-			"Bash(pnpm db:generate:*)",
-			"Bash(node:*)",
-			"Bash(pnpm tsx:*)",
-			"Bash(psql:*)",
-			"Bash(pnpm prisma migrate:*)",
-			"Bash(NODE_ENV=test pnpm prisma migrate deploy)",
-			"Bash(pnpm lint:*)",
-			"Bash(NODE_ENV=development pnpm tsx tmp/test-logging.ts)",
-			"Bash(NODE_ENV=production pnpm tsx tmp/test-logging.ts)",
-			"Bash(rm:*)",
-			"Bash(pnpm typecheck:*)",
-			"Bash(pnpm format:*)",
-			"Bash(pnpm check:fix:*)",
-			"Bash(pnpm dev:*)"
-		],
-		"deny": [],
-		"ask": []
-	}
+  "permissions": {
+    "allow": [
+      "Bash(pnpm init:*)",
+      "Bash(pnpm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpx prisma:*)",
+      "Bash(pnpm lint:fix:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(node:*)",
+      "Bash(pnpm tsx:*)",
+      "Bash(psql:*)",
+      "Bash(pnpm prisma migrate:*)",
+      "Bash(NODE_ENV=test pnpm prisma migrate deploy)",
+      "Bash(pnpm lint:*)",
+      "Bash(NODE_ENV=development pnpm tsx tmp/test-logging.ts)",
+      "Bash(NODE_ENV=production pnpm tsx tmp/test-logging.ts)",
+      "Bash(rm:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm check:fix:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(act:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
 }
