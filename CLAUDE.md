@@ -2,3 +2,4 @@
 
 - As you execute on the plan, check off the boxes for each step.
 - You can use directory tmp/ to perform experiments such as demo scripts.
+- After completing a task, run pnpm check:fix to ensure quality.

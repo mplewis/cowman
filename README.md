@@ -21,6 +21,7 @@ A TypeScript Discord bot that indexes server content and provides user renaming,
 ### Installation
 
 1. **Clone and install dependencies**:
+
    ```bash
    git clone <repository-url>
    cd cowman
@@ -28,25 +29,28 @@ A TypeScript Discord bot that indexes server content and provides user renaming,
    ```
 
 2. **Set up environment variables**:
+
    ```bash
    cp .env.example .env
    # Edit .env with your Discord and database credentials
    ```
 
 3. **Set up database**:
+
    ```bash
    # Generate Prisma client
    pnpm db:generate
-   
+
    # Run database migrations
    pnpm db:migrate
    ```
 
 4. **Start the bot**:
+
    ```bash
    # Development mode with hot reload
    pnpm dev
-   
+
    # Production mode
    pnpm build
    pnpm start
@@ -154,12 +158,14 @@ See [docs/SCHEMA.md](docs/SCHEMA.md) for detailed schema documentation.
 See [docs/PLAN.md](docs/PLAN.md) for detailed implementation roadmap.
 
 ### Phase 1: Project Setup ✅
+
 - [x] TypeScript project setup
 - [x] Prisma database configuration
 - [x] Discord.js client setup
 - [x] Basic bot connection
 
 ### Phase 2-9: In Development
+
 - [ ] Event handling
 - [ ] Rename system
 - [ ] Best name voting

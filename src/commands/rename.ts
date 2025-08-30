@@ -17,7 +17,7 @@ const renameCommand = {
 				.setDescription('The new custom name')
 				.setRequired(true)
 				.setMaxLength(50)
-		),
+		) as SlashCommandBuilder,
 
 	async execute(interaction: ChatInputCommandInteraction) {
 		if (!interaction.guild) {
@@ -61,6 +61,19 @@ const renameCommand = {
 		try {
 			const { client } = database
 
+			// Ensure guild exists in database
+			await client.guild.upsert({
+				where: { id: interaction.guild.id },
+				update: {
+					name: interaction.guild.name,
+					updatedAt: new Date(),
+				},
+				create: {
+					id: interaction.guild.id,
+					name: interaction.guild.name,
+				},
+			})
+
 			// Ensure target user exists in database
 			await client.user.upsert({
 				where: { id: targetUser.id },
@@ -85,6 +98,11 @@ const renameCommand = {
 
 			const previousName = currentUser?.customName || targetUser.displayName
 
+			// First try to change Discord nickname
+			const member = await interaction.guild.members.fetch(targetUser.id)
+			await member.setNickname(newName)
+
+			// Only if Discord rename succeeds, save to database
 			// Update user with new custom name
 			await client.user.update({
 				where: { id: targetUser.id },
@@ -95,15 +113,22 @@ const renameCommand = {
 			})
 
 			// Create name entry for catalog
-			await client.name.upsert({
-				where: { name: newName },
+			const nameRecord = await client.name.upsert({
+				where: {
+					guildId_name: {
+						guildId: interaction.guild.id,
+						name: newName,
+					},
+				},
 				update: {
 					usageCount: { increment: 1 },
 					lastUsed: new Date(),
 				},
 				create: {
+					guildId: interaction.guild.id,
 					name: newName,
 					usageCount: 1,
+					firstUsed: new Date(),
 					lastUsed: new Date(),
 				},
 			})
@@ -111,11 +136,21 @@ const renameCommand = {
 			// Log rename history
 			await client.renameHistory.create({
 				data: {
-					userId: targetUser.id,
-					oldName: previousName,
-					newName,
-					renamedBy: interaction.user.id,
-					guildId: interaction.guild.id,
+					targetUser: {
+						connect: { id: targetUser.id }
+					},
+					renamedBy: {
+						connect: { id: interaction.user.id }
+					},
+					name: {
+						connect: { id: nameRecord.id }
+					},
+					previousName,
+					guild: {
+						connect: { id: interaction.guild.id }
+					},
+					channelId: interaction.channel?.id || 'unknown',
+					messageId: interaction.id,
 				},
 			})
 

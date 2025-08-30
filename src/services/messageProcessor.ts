@@ -72,7 +72,8 @@ export class MessageProcessor {
 					timestamp: message.createdAt,
 					edited: message.editedAt !== null,
 					editedTimestamp: message.editedAt,
-					attachments: message.attachments.size > 0 ? this.serializeAttachments(message) : null,
+					attachments:
+						message.attachments.size > 0 ? this.serializeAttachments(message) : undefined,
 					updatedAt: new Date(),
 				},
 				create: {
@@ -83,7 +84,8 @@ export class MessageProcessor {
 					timestamp: message.createdAt,
 					edited: message.editedAt !== null,
 					editedTimestamp: message.editedAt,
-					attachments: message.attachments.size > 0 ? this.serializeAttachments(message) : null,
+					attachments:
+						message.attachments.size > 0 ? this.serializeAttachments(message) : undefined,
 				},
 			})
 
@@ -124,7 +126,7 @@ export class MessageProcessor {
 			const { client } = database
 
 			// Ensure word exists in dictionary
-			await client.word.upsert({
+			const wordRecord = await client.word.upsert({
 				where: { word },
 				update: {
 					originalForm, // Update with potentially better original form
@@ -139,7 +141,7 @@ export class MessageProcessor {
 			await client.wordUsage.upsert({
 				where: {
 					wordId_userId_messageId: {
-						wordId: word,
+						wordId: wordRecord.id,
 						userId: message.author.id,
 						messageId: message.id,
 					},
@@ -148,7 +150,7 @@ export class MessageProcessor {
 					count,
 				},
 				create: {
-					wordId: word,
+					wordId: wordRecord.id,
 					userId: message.author.id,
 					messageId: message.id,
 					count,

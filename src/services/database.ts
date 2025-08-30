@@ -5,41 +5,7 @@ class DatabaseService {
 	private prisma: PrismaClient
 
 	constructor() {
-		this.prisma = new PrismaClient({
-			log: [
-				{ emit: 'event', level: 'query' },
-				{ emit: 'event', level: 'error' },
-				{ emit: 'event', level: 'info' },
-				{ emit: 'event', level: 'warn' },
-			],
-		})
-
-		this.setupLogging()
-	}
-
-	private setupLogging(): void {
-		this.prisma.$on('query', e => {
-			log.debug(
-				{
-					query: e.query,
-					params: e.params,
-					duration: e.duration,
-				},
-				'Database query executed'
-			)
-		})
-
-		this.prisma.$on('error', e => {
-			log.error(e, 'Database error')
-		})
-
-		this.prisma.$on('info', e => {
-			log.info({ message: e.message }, 'Database info')
-		})
-
-		this.prisma.$on('warn', e => {
-			log.warn({ message: e.message }, 'Database warning')
-		})
+		this.prisma = new PrismaClient()
 	}
 
 	async connect(): Promise<void> {

@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsx src/index.ts",
+		"dev": "tsx watch src/index.ts",
 		"start": "node dist/index.js",
 		"test": "vitest",
 		"test:run": "vitest run",
@@ -14,11 +14,11 @@
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy",
 		"db:studio": "prisma studio",
-		"commands:deploy": "tsx src/commands/deploy.ts",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"format": "prettier --write .",
-		"format:check": "prettier --check ."
+		"check": "pnpm test:run && pnpm typecheck && pnpm lint",
+		"check:fix": "pnpm test:run && pnpm typecheck && pnpm lint:fix",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check . && prettier --check .",
+		"lint:fix": "biome check --write . && prettier --write ."
 	},
 	"keywords": [],
 	"author": "",

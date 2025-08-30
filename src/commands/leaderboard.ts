@@ -26,7 +26,7 @@ const leaderboardCommand = {
 				.setDescription('Number of entries to show (default: 10)')
 				.setMinValue(5)
 				.setMaxValue(20)
-		),
+		) as SlashCommandBuilder,
 
 	async execute(interaction: ChatInputCommandInteraction) {
 		const type = interaction.options.getString('type', true)

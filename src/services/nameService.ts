@@ -78,19 +78,14 @@ export class NameService {
 	 */
 	async getRenameHistory(userId: string, limit = 10) {
 		try {
-			return await database.client.renameHistory.findMany({
-				where: { userId },
-				orderBy: { createdAt: 'desc' },
-				take: limit,
-				include: {
-					renamedByUser: {
-						select: {
-							username: true,
-							displayName: true,
-						},
-					},
-				},
-			})
+			return await database.client.$queryRaw`
+				SELECT rh.*, u.username, u.display_name 
+				FROM rename_history rh
+				LEFT JOIN users u ON u.id = rh.renamed_by_user_id
+				WHERE rh.target_user_id = ${userId}
+				ORDER BY rh.created_at DESC
+				LIMIT ${limit}
+			`
 		} catch (error) {
 			log.error({ error, userId }, 'Failed to get rename history')
 			return []
