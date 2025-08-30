@@ -155,7 +155,7 @@ const renameCommand = {
 			})
 
 			await interaction.reply({
-				content: `✅ ${targetUser.username} has been renamed to **${newName}**!`,
+				content: `${targetUser.username} has been renamed to **${newName}**!`,
 			})
 
 			log.info(

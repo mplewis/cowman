@@ -63,7 +63,7 @@ const leaderboardCommand = {
 		}
 
 		const embed = new EmbedBuilder()
-			.setTitle('🏆 Popular Names Leaderboard')
+			.setTitle('Popular Names Leaderboard')
 			.setDescription('Most used custom names in the server')
 			.setColor(0x5865f2)
 			.setTimestamp()
@@ -104,7 +104,7 @@ const leaderboardCommand = {
 		const displayNames = await nameService.getDisplayNames(userIds)
 
 		const embed = new EmbedBuilder()
-			.setTitle('📝 Top Word Users')
+			.setTitle('Top Word Users')
 			.setDescription('Users who use the most unique words')
 			.setColor(0x57f287)
 			.setTimestamp()
@@ -156,7 +156,7 @@ const leaderboardCommand = {
 		const displayNames = await nameService.getDisplayNames(authorIds)
 
 		const embed = new EmbedBuilder()
-			.setTitle('⭐ Top Reacted Messages')
+			.setTitle('Top Reacted Messages')
 			.setDescription('Messages with the most reactions')
 			.setColor(0xfee75c)
 			.setTimestamp()

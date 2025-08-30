@@ -9,7 +9,8 @@ process.env.NODE_ENV = 'test'
 // Set minimal test environment variables to prevent errors
 process.env.DISCORD_TOKEN = process.env.DISCORD_TOKEN || 'test-token'
 process.env.DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || 'test-client-id'
-process.env.DATABASE_TEST_URL = process.env.DATABASE_TEST_URL || 'postgresql://mplewis@localhost:5432/cowman-test'
+process.env.DATABASE_TEST_URL =
+	process.env.DATABASE_TEST_URL || 'postgresql://mplewis@localhost:5432/cowman-test'
 
 beforeAll(async () => {
 	try {
