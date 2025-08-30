@@ -8,6 +8,7 @@ import { commandHandler } from './commandHandler'
 // Import all commands to register them
 import './rename'
 import './leaderboard'
+import './nameBattle'
 
 /**
  * Deploy slash commands to Discord

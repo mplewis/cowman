@@ -133,6 +133,23 @@ const renameCommand = {
 				},
 			})
 
+			// Ensure renaming user exists in database
+			await client.user.upsert({
+				where: { id: interaction.user.id },
+				update: {
+					username: interaction.user.username,
+					displayName: interaction.user.displayName || interaction.user.username,
+					avatarUrl: interaction.user.displayAvatarURL(),
+					updatedAt: new Date(),
+				},
+				create: {
+					id: interaction.user.id,
+					username: interaction.user.username,
+					displayName: interaction.user.displayName || interaction.user.username,
+					avatarUrl: interaction.user.displayAvatarURL(),
+				},
+			})
+
 			// Log rename history
 			await client.renameHistory.create({
 				data: {
@@ -155,7 +172,7 @@ const renameCommand = {
 			})
 
 			await interaction.reply({
-				content: `${targetUser.username} has been renamed to **${newName}**!`,
+				content: `Renamed ${targetUser.username} to ${newName}`,
 			})
 
 			log.info(

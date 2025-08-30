@@ -1,6 +1,7 @@
 import type { ChatInputCommandInteraction } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 import { database } from '../services/database'
+import { nameBattleService } from '../services/nameBattleService'
 import { nameService } from '../services/nameService'
 import { log } from '../utils/logger'
 import { commandHandler } from './commandHandler'
@@ -16,6 +17,7 @@ const leaderboardCommand = {
 				.setRequired(true)
 				.addChoices(
 					{ name: 'Popular Names', value: 'names' },
+					{ name: 'Best Names (by win rate)', value: 'best-names' },
 					{ name: 'Top Word Users', value: 'words' },
 					{ name: 'Most Reactions', value: 'reactions' }
 				)
@@ -38,6 +40,9 @@ const leaderboardCommand = {
 			switch (type) {
 				case 'names':
 					await this.showNameLeaderboard(interaction, limit)
+					break
+				case 'best-names':
+					await this.showBestNamesLeaderboard(interaction, limit)
 					break
 				case 'words':
 					await this.showWordLeaderboard(interaction, limit)
@@ -69,7 +74,10 @@ const leaderboardCommand = {
 			.setTimestamp()
 
 		const description = names
-			.map((name, index) => `${index + 1}. **${name.name}** - ${name.usageCount} uses`)
+			.map(
+				(name, index) =>
+					`${index + 1}. **${name.name}** - ${name.usageCount} win${name.usageCount === 1 ? '' : 's'}`
+			)
 			.join('\n')
 
 		embed.setDescription(description)
@@ -175,6 +183,37 @@ const leaderboardCommand = {
 				return `${index + 1}. **${authorName}** (${totalReactions} reactions)\n   "${content}"`
 			})
 			.join('\n\n')
+
+		embed.setDescription(description)
+
+		await interaction.editReply({ embeds: [embed] })
+	},
+
+	async showBestNamesLeaderboard(interaction: ChatInputCommandInteraction, limit: number) {
+		if (!interaction.guild) {
+			await interaction.editReply({ content: 'This command can only be used in servers.' })
+			return
+		}
+
+		const nameStats = await nameBattleService.getNameBattleStats(interaction.guild.id, limit)
+
+		if (nameStats.length === 0) {
+			await interaction.editReply({ content: 'No name battle data found.' })
+			return
+		}
+
+		const embed = new EmbedBuilder()
+			.setTitle('Best Names Leaderboard')
+			.setDescription('Names with the highest win rate in battles')
+			.setColor(0xffd700)
+			.setTimestamp()
+
+		const description = nameStats
+			.map((nameData, index) => {
+				const winRate = nameData.winPercentage.toFixed(1)
+				return `${index + 1}. **${nameData.name}** - ${winRate}% win rate (${nameData.wins}/${nameData.battles} battles, ${nameData.totalVotes} total votes)`
+			})
+			.join('\n')
 
 		embed.setDescription(description)
 

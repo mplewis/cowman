@@ -69,10 +69,10 @@ with leaderboards.
 
 ### Phase 4: Best Name Feature
 
-- [ ] Name battle creation system (A vs B format)
-- [ ] Interactive Discord button voting interface
-- [ ] Vote tracking and win percentage calculation
-- [ ] Best names leaderboard by win rate with links to original rename messages
+- [x] Name battle creation system (A vs B format)
+- [x] Interactive Discord button voting interface
+- [x] Vote tracking and win percentage calculation
+- [x] Best names leaderboard by win rate with links to original rename messages
 
 ### Phase 5: Hall of Fame
 
