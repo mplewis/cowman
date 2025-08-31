@@ -5,5 +5,12 @@ export default defineConfig({
 		globals: true,
 		environment: 'node',
 		setupFiles: ['./src/test/setup.ts'],
+		// Run integration tests sequentially to avoid database conflicts
+		pool: 'forks',
+		poolOptions: {
+			forks: {
+				singleFork: true,
+			},
+		},
 	},
 })

@@ -60,7 +60,12 @@ const leaderboardCommand = {
 	},
 
 	async showNameLeaderboard(interaction: ChatInputCommandInteraction, limit: number) {
-		const names = await getNameStats(limit)
+		if (!interaction.guild) {
+			await interaction.editReply({ content: 'This command can only be used in servers.' })
+			return
+		}
+
+		const names = await getNameStats(limit, interaction.guild.id)
 
 		if (names.length === 0) {
 			await interaction.editReply({ content: 'No names found in the catalog.' })

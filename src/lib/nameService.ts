@@ -57,9 +57,11 @@ export async function getDisplayNames(userIds: string[]): Promise<Map<string, st
 /**
  * Get name usage statistics
  */
-export async function getNameStats(limit = 10) {
+export async function getNameStats(limit = 10, guildId?: string) {
 	try {
+		const whereClause = guildId ? { guildId } : {}
 		return await db.name.findMany({
+			where: whereClause,
 			orderBy: { usageCount: 'desc' },
 			take: limit,
 		})

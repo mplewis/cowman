@@ -62,7 +62,7 @@ export async function processReactionAdd(
 		const isCustom = reaction.emoji.id !== null
 
 		// Ensure reaction record exists and update count
-		await client.reaction.upsert({
+		const reactionRecord = await client.reaction.upsert({
 			where: {
 				messageId_emoji: {
 					messageId: reaction.message.id,
@@ -86,7 +86,7 @@ export async function processReactionAdd(
 		await client.reactionUser.upsert({
 			where: {
 				reactionId_userId: {
-					reactionId: `${reaction.message.id}-${emojiId}`,
+					reactionId: reactionRecord.id,
 					userId: user.id,
 				},
 			},
@@ -94,7 +94,7 @@ export async function processReactionAdd(
 				createdAt: new Date(), // Update timestamp
 			},
 			create: {
-				reactionId: `${reaction.message.id}-${emojiId}`,
+				reactionId: reactionRecord.id,
 				userId: user.id,
 			},
 		})
@@ -145,10 +145,31 @@ export async function processReactionRemove(
 		const client = db
 		const emojiId = getEmojiIdentifier(reaction)
 
+		// Find the reaction record to get its ID
+		const reactionRecord = await client.reaction.findUnique({
+			where: {
+				messageId_emoji: {
+					messageId: reaction.message.id,
+					emoji: emojiId,
+				},
+			},
+		})
+
+		if (!reactionRecord) {
+			log.warn(
+				{
+					messageId: reaction.message.id,
+					emoji: getEmojiName(reaction),
+				},
+				'Reaction record not found for removal'
+			)
+			return
+		}
+
 		// Remove individual user reaction record
 		await client.reactionUser.deleteMany({
 			where: {
-				reactionId: `${reaction.message.id}-${emojiId}`,
+				reactionId: reactionRecord.id,
 				userId: user.id,
 			},
 		})
