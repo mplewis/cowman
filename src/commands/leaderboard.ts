@@ -1,10 +1,10 @@
 import type { ChatInputCommandInteraction } from 'discord.js'
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
-import { database } from '../services/database'
-import { nameBattleService } from '../services/nameBattleService'
-import { nameService } from '../services/nameService'
+import { addCommand } from '../lib/commandHandler'
+import { getNameBattleStats } from '../lib/nameBattleService'
+import { getDisplayNames, getNameStats } from '../lib/nameService'
+import { db } from '../services/database'
 import { log } from '../utils/logger'
-import { commandHandler } from './commandHandler'
 
 const leaderboardCommand = {
 	data: new SlashCommandBuilder()
@@ -60,7 +60,7 @@ const leaderboardCommand = {
 	},
 
 	async showNameLeaderboard(interaction: ChatInputCommandInteraction, limit: number) {
-		const names = await nameService.getNameStats(limit)
+		const names = await getNameStats(limit)
 
 		if (names.length === 0) {
 			await interaction.editReply({ content: 'No names found in the catalog.' })
@@ -86,7 +86,7 @@ const leaderboardCommand = {
 	},
 
 	async showWordLeaderboard(interaction: ChatInputCommandInteraction, limit: number) {
-		const { client } = database
+		const client = db
 
 		// Get top word users with their custom names
 		const topUsers = await client.wordUsage.groupBy({
@@ -109,7 +109,7 @@ const leaderboardCommand = {
 
 		// Get display names for users
 		const userIds = topUsers.map(u => u.userId)
-		const displayNames = await nameService.getDisplayNames(userIds)
+		const displayNames = await getDisplayNames(userIds)
 
 		const embed = new EmbedBuilder()
 			.setTitle('Top Word Users')
@@ -131,7 +131,7 @@ const leaderboardCommand = {
 	},
 
 	async showReactionLeaderboard(interaction: ChatInputCommandInteraction, limit: number) {
-		const { client } = database
+		const client = db
 
 		// Get top reaction receivers with their custom names
 		const topMessages = await client.reaction.groupBy({
@@ -161,7 +161,7 @@ const leaderboardCommand = {
 
 		// Get display names for authors
 		const authorIds = messages.map(m => m.authorId)
-		const displayNames = await nameService.getDisplayNames(authorIds)
+		const displayNames = await getDisplayNames(authorIds)
 
 		const embed = new EmbedBuilder()
 			.setTitle('Top Reacted Messages')
@@ -195,7 +195,7 @@ const leaderboardCommand = {
 			return
 		}
 
-		const nameStats = await nameBattleService.getNameBattleStats(interaction.guild.id, limit)
+		const nameStats = await getNameBattleStats(interaction.guild.id, limit)
 
 		if (nameStats.length === 0) {
 			await interaction.editReply({ content: 'No name battle data found.' })
@@ -222,4 +222,4 @@ const leaderboardCommand = {
 }
 
 // Register the command
-commandHandler.addCommand(leaderboardCommand)
+addCommand(leaderboardCommand)

@@ -1,4 +1,4 @@
-import { database } from './services/database'
+import { connectDatabase, disconnectDatabase } from './services/database'
 import { discordService } from './services/discord'
 import { log } from './utils/logger'
 
@@ -8,7 +8,7 @@ function setupGracefulShutdown(): void {
 
 		try {
 			await discordService.disconnect()
-			await database.disconnect()
+			await disconnectDatabase()
 			log.info('Shutdown complete')
 			process.exit(0)
 		} catch (error) {
@@ -33,7 +33,7 @@ async function main(): Promise<void> {
 	log.info('Starting Discord bot...')
 
 	try {
-		await database.connect()
+		await connectDatabase()
 		await discordService.connect()
 		setupGracefulShutdown()
 		log.info('Bot is running!')

@@ -1,37 +1,33 @@
 import { PrismaClient } from '../generated/prisma/index'
 import { log } from '../utils/logger'
 
-class DatabaseService {
-	private prisma: PrismaClient
+/**
+ * Database client instance
+ */
+export const db = new PrismaClient()
 
-	constructor() {
-		this.prisma = new PrismaClient()
-	}
-
-	async connect(): Promise<void> {
-		try {
-			await this.prisma.$connect()
-			log.info('Connected to database')
-		} catch (error) {
-			log.error(error, 'Failed to connect to database')
-			throw error
-		}
-	}
-
-	async disconnect(): Promise<void> {
-		try {
-			await this.prisma.$disconnect()
-			log.info('Disconnected from database')
-		} catch (error) {
-			log.error(error, 'Failed to disconnect from database')
-			throw error
-		}
-	}
-
-	get client(): PrismaClient {
-		return this.prisma
+/**
+ * Connect to the database
+ */
+export async function connectDatabase(): Promise<void> {
+	try {
+		await db.$connect()
+		log.info('Connected to database')
+	} catch (error) {
+		log.error(error, 'Failed to connect to database')
+		throw error
 	}
 }
 
-export const database = new DatabaseService()
-export const db = database.client
+/**
+ * Disconnect from the database
+ */
+export async function disconnectDatabase(): Promise<void> {
+	try {
+		await db.$disconnect()
+		log.info('Disconnected from database')
+	} catch (error) {
+		log.error(error, 'Failed to disconnect from database')
+		throw error
+	}
+}

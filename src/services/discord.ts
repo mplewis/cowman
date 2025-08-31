@@ -1,10 +1,10 @@
-import { ActivityType, type ButtonInteraction, Client, Events, GatewayIntentBits } from 'discord.js'
-import { commandHandler } from '../commands/commandHandler'
+import { ActivityType, Client, Events, GatewayIntentBits } from 'discord.js'
+import { handleNameBattleInteraction } from '../lib/buttonInteractions'
+import { executeCommand } from '../lib/commandHandler'
+import { processMessage } from '../lib/messageProcessor'
+import { processReactionAdd, processReactionRemove } from '../lib/reactionProcessor'
 import { config } from '../utils/env'
 import { log } from '../utils/logger'
-import { database } from './database'
-import { messageProcessor } from './messageProcessor'
-import { reactionProcessor } from './reactionProcessor'
 
 // Import commands to register them
 import '../commands/rename'
@@ -42,7 +42,7 @@ class DiscordService {
 		// Message events
 		this.client.on(Events.MessageCreate, async message => {
 			try {
-				await messageProcessor.processMessage(message)
+				await processMessage(message)
 			} catch (error) {
 				log.error(error, 'Failed to process message create event')
 			}
@@ -54,7 +54,7 @@ class DiscordService {
 				if (newMessage.partial) {
 					newMessage = await newMessage.fetch()
 				}
-				await messageProcessor.processMessage(newMessage)
+				await processMessage(newMessage)
 			} catch (error) {
 				log.error(error, 'Failed to process message update event')
 			}
@@ -63,7 +63,7 @@ class DiscordService {
 		// Reaction events
 		this.client.on(Events.MessageReactionAdd, async (reaction, user) => {
 			try {
-				await reactionProcessor.processReactionAdd(reaction, user)
+				await processReactionAdd(reaction, user)
 			} catch (error) {
 				log.error(error, 'Failed to process reaction add event')
 			}
@@ -71,7 +71,7 @@ class DiscordService {
 
 		this.client.on(Events.MessageReactionRemove, async (reaction, user) => {
 			try {
-				await reactionProcessor.processReactionRemove(reaction, user)
+				await processReactionRemove(reaction, user)
 			} catch (error) {
 				log.error(error, 'Failed to process reaction remove event')
 			}
@@ -81,13 +81,13 @@ class DiscordService {
 		this.client.on(Events.InteractionCreate, async interaction => {
 			if (interaction.isChatInputCommand()) {
 				try {
-					await commandHandler.executeCommand(interaction)
+					await executeCommand(interaction)
 				} catch (error) {
 					log.error(error, 'Failed to handle slash command interaction')
 				}
 			} else if (interaction.isButton()) {
 				try {
-					await this.handleButtonInteraction(interaction)
+					await handleNameBattleInteraction(interaction)
 				} catch (error) {
 					log.error(error, 'Failed to handle button interaction')
 				}
@@ -106,118 +106,6 @@ class DiscordService {
 		this.client.on(Events.Debug, debug => {
 			log.debug({ debug }, 'Discord client debug')
 		})
-	}
-
-	private async handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
-		if (!interaction.guild) {
-			return
-		}
-
-		if (interaction.customId === 'name_battle_a' || interaction.customId === 'name_battle_b') {
-			const { client } = database
-
-			// Find the battle associated with this message
-			const battle = await client.nameBattle.findFirst({
-				where: {
-					messageId: interaction.message.id,
-					active: true,
-				},
-			})
-
-			if (!battle) {
-				await interaction.reply({
-					content: 'This name battle is no longer active.',
-					ephemeral: true,
-				})
-				return
-			}
-
-			const choice = interaction.customId === 'name_battle_a' ? 'a' : 'b'
-			const chosenName = choice === 'a' ? battle.nameA : battle.nameB
-
-			// Ensure user exists in database
-			await client.user.upsert({
-				where: { id: interaction.user.id },
-				update: {
-					username: interaction.user.username,
-					displayName: interaction.user.displayName || interaction.user.username,
-					avatarUrl: interaction.user.displayAvatarURL(),
-					updatedAt: new Date(),
-				},
-				create: {
-					id: interaction.user.id,
-					username: interaction.user.username,
-					displayName: interaction.user.displayName || interaction.user.username,
-					avatarUrl: interaction.user.displayAvatarURL(),
-				},
-			})
-
-			// Check if user has already voted
-			const existingVote = await client.nameVote.findUnique({
-				where: {
-					battleId_userId: {
-						battleId: battle.id,
-						userId: interaction.user.id,
-					},
-				},
-			})
-
-			if (existingVote) {
-				if (existingVote.choice === choice) {
-					await interaction.reply({
-						content: `You have already voted for ${chosenName}`,
-						ephemeral: true,
-					})
-				} else {
-					// Update existing vote
-					await client.nameVote.update({
-						where: { id: existingVote.id },
-						data: { choice },
-					})
-
-					await interaction.reply({
-						content: `Your vote has been changed to ${chosenName}`,
-						ephemeral: true,
-					})
-
-					log.info(
-						{
-							battleId: battle.id,
-							userId: interaction.user.id,
-							choice,
-							chosenName,
-							action: 'changed',
-						},
-						'User changed name battle vote'
-					)
-				}
-			} else {
-				// Create new vote
-				await client.nameVote.create({
-					data: {
-						battleId: battle.id,
-						userId: interaction.user.id,
-						choice,
-					},
-				})
-
-				await interaction.reply({
-					content: `You voted for ${chosenName}`,
-					ephemeral: true,
-				})
-
-				log.info(
-					{
-						battleId: battle.id,
-						userId: interaction.user.id,
-						choice,
-						chosenName,
-						action: 'new',
-					},
-					'User cast name battle vote'
-				)
-			}
-		}
 	}
 
 	async connect(): Promise<void> {

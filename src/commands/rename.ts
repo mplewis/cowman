@@ -1,8 +1,8 @@
 import type { ChatInputCommandInteraction } from 'discord.js'
 import { SlashCommandBuilder } from 'discord.js'
-import { database } from '../services/database'
+import { addCommand } from '../lib/commandHandler'
+import { db } from '../services/database'
 import { log } from '../utils/logger'
-import { commandHandler } from './commandHandler'
 
 const renameCommand = {
 	data: new SlashCommandBuilder()
@@ -59,7 +59,7 @@ const renameCommand = {
 		}
 
 		try {
-			const { client } = database
+			const client = db
 
 			// Ensure guild exists in database
 			await client.guild.upsert({
@@ -201,4 +201,4 @@ const renameCommand = {
 }
 
 // Register the command
-commandHandler.addCommand(renameCommand)
+addCommand(renameCommand)

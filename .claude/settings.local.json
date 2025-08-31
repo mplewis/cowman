@@ -21,7 +21,8 @@
 			"Bash(pnpm format:*)",
 			"Bash(pnpm check:fix:*)",
 			"Bash(pnpm dev:*)",
-			"Bash(act:*)"
+			"Bash(act:*)",
+			"Bash(find:*)"
 		],
 		"deny": [],
 		"ask": []

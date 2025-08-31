@@ -6,9 +6,9 @@ import {
 	EmbedBuilder,
 	SlashCommandBuilder,
 } from 'discord.js'
-import { database } from '../services/database'
+import { addCommand } from '../lib/commandHandler'
+import { db } from '../services/database'
 import { log } from '../utils/logger'
-import { commandHandler } from './commandHandler'
 
 /**
  * Create and manage name battles (A vs B voting competitions)
@@ -29,7 +29,7 @@ const nameBattleCommand = {
 			return
 		}
 
-		const { client } = database
+		const client = db
 
 		// Get all names from this guild
 		const allNames = await client.name.findMany({
@@ -133,4 +133,4 @@ const nameBattleCommand = {
 }
 
 // Register the command
-commandHandler.addCommand(nameBattleCommand)
+addCommand(nameBattleCommand)

@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 
 import { REST, Routes } from 'discord.js'
+import { getCommandsData } from '../lib/commandHandler'
 import { config } from '../utils/env'
 import { log } from '../utils/logger'
-import { commandHandler } from './commandHandler'
 
 // Import all commands to register them
 import './rename'
@@ -14,7 +14,7 @@ import './nameBattle'
  * Deploy slash commands to Discord
  */
 export async function deployCommands(): Promise<void> {
-	const commands = commandHandler.getCommandsData()
+	const commands = getCommandsData()
 	const rest = new REST().setToken(config.discordToken)
 
 	try {
