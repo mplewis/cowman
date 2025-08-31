@@ -29,19 +29,20 @@ export async function processMessage(message: Message): Promise<void> {
 		})
 
 		// Ensure channel exists
-		if (message.guild && message.channel) {
+		if (message.channel) {
+			const guildId = message.guild?.id || 'dm'
 			await client.channel.upsert({
 				where: { id: message.channel.id },
 				update: {
 					name: 'name' in message.channel ? message.channel.name || 'unknown' : 'unknown',
-					type: message.channel.type.toString(),
+					type: message.channel.type?.toString() || '1', // 1 = DM channel type
 					updatedAt: new Date(),
 				},
 				create: {
 					id: message.channel.id,
-					guildId: message.guild.id,
+					guildId,
 					name: 'name' in message.channel ? message.channel.name || 'unknown' : 'unknown',
-					type: message.channel.type.toString(),
+					type: message.channel.type?.toString() || '1', // 1 = DM channel type
 				},
 			})
 		}
@@ -66,7 +67,7 @@ export async function processMessage(message: Message): Promise<void> {
 		// Store the message
 		const attachments =
 			message.attachments.size > 0
-				? message.attachments.map(a => ({ id: a.id, url: a.url, name: a.name, size: a.size }))
+				? Array.from(message.attachments.values()).map(a => ({ id: a.id, url: a.url, name: a.name, size: a.size }))
 				: undefined
 
 		await client.message.upsert({
