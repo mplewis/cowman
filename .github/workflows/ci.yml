@@ -46,6 +46,7 @@ jobs:
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create tag
         if: steps.check_tag.outputs.exists == 'false'
