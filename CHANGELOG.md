@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-02-16
+
+### Fixed
+- Fixed GitHub Actions workflow syntax error (missing `fi` in tag check)
+- Fixed Docker job to run after release creates a new tag on main
+- Fixed Docker Hub username to use repo vars instead of secrets
+
 ## [0.1.0] - 2026-02-16
 
 ### Added
@@ -24,5 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed prometheus metrics
 - Removed cloudbuild configuration
 
-[Unreleased]: https://github.com/mplewis/cowman/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mplewis/cowman/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/mplewis/cowman/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mplewis/cowman/releases/tag/v0.1.0

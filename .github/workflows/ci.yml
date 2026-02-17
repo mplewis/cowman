@@ -75,7 +75,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: ${{ vars.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push to Docker Hub
@@ -84,8 +84,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/cowman:${{ needs.release.outputs.version || github.ref_name }}
-            ${{ secrets.DOCKER_HUB_USERNAME }}/cowman:latest
+            ${{ vars.DOCKER_HUB_USERNAME }}/cowman:${{ needs.release.outputs.version || github.ref_name }}
+            ${{ vars.DOCKER_HUB_USERNAME }}/cowman:latest
           labels: |
             org.opencontainers.image.version=${{ needs.release.outputs.version || github.ref_name }}
           cache-from: type=gha
