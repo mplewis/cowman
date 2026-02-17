@@ -1,23 +1,16 @@
-FROM golang:1.15 AS build
+FROM golang:1.26 AS build
 WORKDIR /app
+COPY go.* ./
+RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build .
 
-########################################
+FROM debian:bookworm-slim AS tzdata
+RUN apt-get update && apt-get install -y --no-install-recommends tzdata ca-certificates && rm -rf /var/lib/apt/lists/*
 
-FROM alpine:latest as support
-RUN apk --no-cache add tzdata zip ca-certificates
-WORKDIR /usr/share/zoneinfo
-RUN zip -q -r -0 /zoneinfo.zip .
-
-########################################
-
-FROM scratch AS prod
+FROM scratch
 WORKDIR /app
-
-ENV ZONEINFO /zoneinfo.zip
-COPY --from=support /zoneinfo.zip /
-COPY --from=support /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-
+COPY --from=tzdata /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=tzdata /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /app/cowman /app/cowman
-CMD [ "/app/cowman" ]
+CMD ["/app/cowman"]

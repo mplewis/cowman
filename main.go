@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -25,6 +26,8 @@ func env(key string) string {
 }
 
 func init() {
+	godotenv.Load()
+
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if os.Getenv("DEBUG") != "" {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
